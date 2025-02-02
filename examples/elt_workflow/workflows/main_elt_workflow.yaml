@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: elt-example-
+spec:
+  entrypoint: elt-pipeline
+  templates:
+    - name: elt-pipeline
+      dag:
+        tasks:
+          - name: extract-data
+            templateRef:
+              name: extract
+              template: extract
+          - name: load-data
+            dependencies: [extract-data]
+            templateRef:
+              name: load
+              template: load
+            arguments:
+              artifacts:
+                - name: extracted-data
+                  from: "{{tasks.extract-data.outputs.artifacts.data}}"
+          - name: transform-data
+            dependencies: [load-data]
+            templateRef:
+              name: transform
+              template: transform
+            arguments:
+              artifacts:
+                - name: loaded-data
+                  from: "{{tasks.load-data.outputs.artifacts.data}}"
+
+  volumes:
+    - name: data-volume
+      emptyDir: {}

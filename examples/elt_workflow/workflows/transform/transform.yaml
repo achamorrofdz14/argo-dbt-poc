@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Template
+metadata:
+  name: transform
+spec:
+  inputs:
+    artifacts:
+      - name: loaded-data
+        path: /mnt/data/data.csv
+  outputs:
+    artifacts:
+      - name: transformed-data
+        path: /mnt/data/transformed_data.csv
+        globalName: transformed-data
+  container:
+    image: transform-image:latest
+    imagePullPolicy: IfNotPresent 
+    command: [python]
+    args: ["/app/transform_data.py"]
+    workingDir: /app
+    volumeMounts:
+      - name: data-volume
+        mountPath: /mnt/data
