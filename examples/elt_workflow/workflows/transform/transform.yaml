@@ -1,23 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Template
+kind: WorkflowTemplate
 metadata:
   name: transform
 spec:
-  inputs:
-    artifacts:
-      - name: loaded-data
-        path: /mnt/data/data.csv
-  outputs:
-    artifacts:
-      - name: transformed-data
-        path: /mnt/data/transformed_data.csv
-        globalName: transformed-data
-  container:
-    image: transform-image:latest
-    imagePullPolicy: IfNotPresent 
-    command: [python]
-    args: ["/app/transform_data.py"]
-    workingDir: /app
-    volumeMounts:
-      - name: data-volume
-        mountPath: /mnt/data
+  templates:
+  - name: transform-template
+    # inputs:
+    #   artifacts:
+    #     - name: loaded-data
+    #       path: /mnt/dbt/data/data_loaded.csv
+    outputs:
+      artifacts:
+        - name: transformed-data
+          path: /mnt/dbt/transformed_data.csv
+    container:
+      image: transform-image:latest
+      imagePullPolicy: IfNotPresent 
+      command: [python]
+      args: ["/app/transform_data.py"]
+      workingDir: /app
+      volumeMounts:
+        - name: dbt-output-volume
+          mountPath: /mnt/dbt

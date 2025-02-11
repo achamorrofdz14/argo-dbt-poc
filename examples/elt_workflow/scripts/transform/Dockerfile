@@ -4,7 +4,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy requirements and transformation files
-COPY requirements.txt transform_data.py /app/
+COPY ./scripts/transform/requirements.txt ./scripts/transform/transform_data.py /app/
 
 # Install requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
