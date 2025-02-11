@@ -1,15 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Template
+kind: WorkflowTemplate
 metadata:
   name: extract
 spec:
-  outputs:
-    artifacts:
-      - name: data
-        path: /tmp/data.csv
-        globalName: data
-  container:
-    image: alpine/curl:latest
-    command: [sh, -c]
-    args: |
-      curl -o /tmp/data.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv
+  templates:
+  - name: extract-template
+    # outputs:
+    #   artifacts:
+    #     - name: extracted-data
+    #       path: /mnt/dbt/data.csv
+    #       globalName: extracted-data
+    container:
+      image: alpine/curl:latest
+      command: [sh, -c]
+      args:
+        - |
+          curl -o /mnt/dbt/data.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv
+      volumeMounts:
+        - name: dbt-output-volume
+          mountPath: /mnt/dbt
