@@ -37,4 +37,7 @@ argo version
 kubectl -n argo apply -f ./pv-pvc.yml
 
 ### Install UI
-kubectl -n argo port-forward service/argo-server 2746:2746
+
+# kubectl wait --namespace default --for=condition=ready pod --selector=app.kubernetes.io/name=postgresql --timeout=300s
+echo "When the pod succesfully end, remember to execute: "
+echo "kubectl -n argo port-forward service/argo-server 2746:2746"

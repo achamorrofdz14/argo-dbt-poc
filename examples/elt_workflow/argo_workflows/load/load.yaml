@@ -5,14 +5,10 @@ metadata:
 spec:
   templates:
   - name: load-template
-    # inputs:
-    #   artifacts:
-    #     - name: extracted-data
-    #       path: /mnt/dbt/data.csv
-    # outputs:
-    #   artifacts:
-    #     - name: loaded-data
-    #       path: /mnt/dbt/data/data_loaded.csv
+    outputs:
+      artifacts:
+        - name: loaded-data
+          path: /mnt/dbt/data_loaded.csv
     container:
       image: alpine:latest
       command: [sh, -c]

@@ -5,11 +5,11 @@ metadata:
 spec:
   templates:
   - name: extract-template
-    # outputs:
-    #   artifacts:
-    #     - name: extracted-data
-    #       path: /mnt/dbt/data.csv
-    #       globalName: extracted-data
+    outputs:
+      artifacts:
+        - name: extracted-data
+          path: /mnt/dbt/data.csv
+          globalName: extracted-data
     container:
       image: alpine/curl:latest
       command: [sh, -c]

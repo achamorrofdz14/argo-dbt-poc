@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: dbt-workflow-example-
+spec:
+  entrypoint: dbt-elt-pipeline
+  templates:
+    - name: fetch-iris-data
+      container:
+        image: curlimages/curl:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - "curl -o /tmp/iris.json https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.json"
+      outputs:
+        artifacts:
+          - name: iris-data
+            path: /tmp/iris.json
+
+    - name: run-dbt
+      inputs:
+        artifacts:
+          - name: iris-data
+            path: /dbt/seeds/iris.json  # Mount the artifact into the dbt project's seeds directory
+      container:
+        image: dbt-postgres-image:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        env:
+          - name: POSTGRES_HOST
+            value: "postgresql"
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "mysecretpassword"
+          - name: POSTGRES_DB
+            value: "postgres"
+        args: 
+          - |
+           # --- DEBUGGING: List dbt resources ---
+            # echo "Listing dbt resources:"
+            # dbt ls --select state:modified+ --resource-type seed --profiles-dir /dbt # List modified seeds
+            # echo "-------------------------"
+            # dbt ls --select iris --resource-type seed --profiles-dir /dbt # Explicitly try to select 'iris'
+            echo "-------------------------"
+            dbt ls --profiles-dir /dbt #list all resources
+
+            # --- END DEBUGGING ---
+            dbt seed
+            dbt run --profiles-dir /dbt
+        workingDir: /dbt
+
+    - name: dbt-elt-pipeline
+      dag:
+        tasks:
+          - name: fetch-data
+            template: fetch-iris-data
+          - name: dbt-run
+            dependencies: [fetch-data]
+            template: run-dbt
+            arguments:
+              artifacts:
+                - name: iris-data
+                  from: "{{tasks.fetch-data.outputs.artifacts.iris-data}}"

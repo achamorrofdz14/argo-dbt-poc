@@ -12,8 +12,8 @@ kind load docker-image $IMAGE_NAME -n multi-node-cluster
 
 rm ./Dockerfile
 
-kubectl apply -f ./workflows/extract/extract.yaml -n argo
-kubectl -n argo apply -f ./workflows/load/load.yaml
-kubectl -n argo apply -f ./workflows/transform/transform.yaml
+kubectl apply -f ./argo_workflows/extract/extract.yaml -n argo
+kubectl -n argo apply -f ./argo_workflows/load/load.yaml
+kubectl -n argo apply -f ./argo_workflows/transform/transform.yaml
 
-argo submit ./workflows/main_elt_workflow.yaml -n argo --watch
+argo submit ./argo_workflows/main_elt_workflow.yaml -n argo --watch

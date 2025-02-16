@@ -9,7 +9,7 @@ Examples:
 
 In order to run locally the examples you have to install:
 - [Docker]()
-- [Kind]() / [Minikube]() / (similar)
+- [Kind]()
 - [Argo Workflow]()
 - [k9s]() (optional)
 
@@ -31,3 +31,8 @@ Project defined under [elt_workflow]() folder.
     - `Dockerfile`: file to wrap transformation script.
     - `requirements.txt`: Python dependencies.
 
+### Cons
+
+I found some cons creating this examples:
+
+- You can't use argument artifacts in dag tasks. Instead using sequential executions you can.

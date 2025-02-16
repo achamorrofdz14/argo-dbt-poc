@@ -1,0 +1,31 @@
+name: 'dbt_project'
+version: '1.0.0'
+config-version: 2
+
+profile: 'profile'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analysis"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:       
+  - "target"
+  - "dbt_packages"
+
+
+models:
+  dbt_project:
+    +materialized: table
+
+seeds:
+  dbt_project:
+    iris:
+      +column_types:
+        sepal_length: FLOAT
+        sepal_width: FLOAT
+        petal_length: FLOAT
+        petal_width: FLOAT
+        species: STRING
